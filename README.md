@@ -1,4 +1,20 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Forex Live Wall
+
+## Installing
+
+Using yarn:
+
+```bash
+$ yarn install
+```
+
+## Configuration
+
+Configure polling timeout in:
+
+```
+utils/config.js
+```
 
 ## Available Scripts
 
