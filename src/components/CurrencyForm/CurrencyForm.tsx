@@ -27,6 +27,7 @@ export default class CurrencyForm extends Component<
         let handleSubmit = (event: FormEvent) => {
             event.preventDefault();
             if (this.state.currency.length > 0) {
+                // TODO - Proper validation
                 this.props.onCurrencySubmit({ currency: this.state.currency });
             }
         };
