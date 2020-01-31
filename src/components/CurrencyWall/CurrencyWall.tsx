@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ForexData from '../../utils/ForexData';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CONFIG from '../../utils/config';
 
@@ -23,7 +22,6 @@ type WallProps = {
 
 type WallState = {
     currency: ForexCurrency | null;
-    error: boolean;
 };
 
 export default class CurrencyWall extends Component<WallProps, WallState> {
@@ -32,7 +30,6 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
 
         this.state = {
             currency: null,
-            error: false,
         };
     }
 
@@ -49,11 +46,6 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
 
     getForexData = async (): Promise<void> => {
         try {
-            this.setState({
-                currency: null,
-                error: false,
-            });
-
             const forexDataResponse = await ForexData;
             const currency = forexDataResponse.forexList.find(
                 (element: ForexCurrency) => element.ticker === this.props.currencyTicker,
@@ -62,7 +54,6 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
             if (currency !== undefined) {
                 this.setState({
                     currency,
-                    error: false,
                 });
 
                 return;
@@ -70,32 +61,24 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
 
             this.setState({
                 currency: null,
-                error: true,
             });
         } catch (e) {
             console.log(e); // TODO - Output to logger
 
             this.setState({
                 currency: null,
-                error: true,
             });
         }
     };
 
     render(): JSX.Element | null {
-        if (this.state.error) {
+        const { currency } = this.state;
+
+        if (!currency) {
             return (
                 <Typography component="h2" variant="h6" align="center">
                     Something went wrong...
                 </Typography>
-            );
-        }
-
-        if (!this.state.currency) {
-            return (
-                <div className="circularLoader">
-                    <CircularProgress />
-                </div>
             );
         }
 
@@ -112,7 +95,7 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                                 <Typography variant="subtitle2">BID</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">{this.state.currency.bid}</Typography>
+                                <Typography variant="subtitle1">{currency.bid}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container item direction="column">
@@ -120,7 +103,7 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                                 <Typography variant="subtitle2">HIGH</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">{this.state.currency.high}</Typography>
+                                <Typography variant="subtitle1">{currency.high}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container item direction="column">
@@ -128,7 +111,7 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                                 <Typography variant="subtitle2">LOW</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">{this.state.currency.low}</Typography>
+                                <Typography variant="subtitle1">{currency.low}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -137,14 +120,14 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                             <Grid item>
                                 <Typography variant="subtitle2">ASK</Typography>
                             </Grid>
-                            <Grid item>{this.state.currency.ask}</Grid>
+                            <Grid item>{currency.ask}</Grid>
                         </Grid>
                         <Grid container item direction="column">
                             <Grid item>
                                 <Typography variant="subtitle2">OPEN</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">{this.state.currency.open}</Typography>
+                                <Typography variant="subtitle1">{currency.open}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container direction="column">
@@ -152,7 +135,7 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                                 <Typography variant="subtitle2">CHANGE</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1">{this.state.currency.changes.toFixed(5)}</Typography>
+                                <Typography variant="subtitle1">{currency.changes.toFixed(5)}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>

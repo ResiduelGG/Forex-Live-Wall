@@ -29,6 +29,8 @@ export default class App extends Component<{}, AppState> {
     };
 
     render(): JSX.Element {
+        const { currency } = this.state;
+
         return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -39,7 +41,7 @@ export default class App extends Component<{}, AppState> {
 
                     <CurrencyForm onCurrencySubmit={this.handleSubmit} />
 
-                    {this.state.currency && <CurrencyWall currencyTicker={this.state.currency} />}
+                    {currency && <CurrencyWall currencyTicker={currency} key={Date.now()} />}
                 </div>
 
                 <Box mt={8}>
