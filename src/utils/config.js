@@ -1,6 +1,6 @@
 const CONFIG = {
     apiUrl: 'https://financialmodelingprep.com/api/v3/forex',
-    pollTime: 1, // In seconds
+    pollTime: 5, // In seconds
 };
 
 export default CONFIG;

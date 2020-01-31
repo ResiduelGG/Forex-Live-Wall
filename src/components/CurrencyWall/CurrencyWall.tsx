@@ -1,6 +1,8 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import ForexData from '../../utils/ForexData';
 import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CONFIG from '../../utils/config';
 
@@ -21,6 +23,7 @@ type WallProps = {
 
 type WallState = {
     currency: ForexCurrency | null;
+    error: boolean;
 };
 
 export default class CurrencyWall extends Component<WallProps, WallState> {
@@ -29,37 +32,76 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
 
         this.state = {
             currency: null,
+            error: false,
         };
     }
 
-    componentDidMount() {
-        setInterval(() => this.getForexData(), CONFIG.pollTime * 1000);
+    interval!: NodeJS.Timeout;
+
+    componentDidMount(): void {
+        this.interval = setInterval(() => this.getForexData(), CONFIG.pollTime * 1000);
         this.getForexData();
     }
 
-    getForexData = async () => {
+    componentWillUnmount(): void {
+        clearInterval(this.interval);
+    }
+
+    getForexData = async (): Promise<void> => {
         try {
+            this.setState({
+                currency: null,
+                error: false,
+            });
+
             const forexDataResponse = await ForexData;
             const currency = forexDataResponse.forexList.find(
                 (element: ForexCurrency) => element.ticker === this.props.currencyTicker,
             );
 
+            if (currency !== undefined) {
+                this.setState({
+                    currency,
+                    error: false,
+                });
+
+                return;
+            }
+
             this.setState({
-                currency: currency !== undefined ? currency : null,
+                currency: null,
+                error: true,
             });
         } catch (e) {
-            console.log(e); // TODO - Error handling
+            console.log(e); // TODO - Output to logger
+
+            this.setState({
+                currency: null,
+                error: true,
+            });
         }
     };
 
-    render() {
-        if (this.state.currency === null) {
-            return null;
+    render(): JSX.Element | null {
+        if (this.state.error) {
+            return (
+                <Typography component="h2" variant="h6" align="center">
+                    Something went wrong...
+                </Typography>
+            );
+        }
+
+        if (!this.state.currency) {
+            return (
+                <div className="circularLoader">
+                    <CircularProgress />
+                </div>
+            );
         }
 
         return (
-            <Fragment>
-                <Typography component="h2" variant="h6" align="center">
+            <Card>
+                <Typography component="h2" variant="h6" align="center" className="currencyCardTitle">
                     {this.props.currencyTicker}
                 </Typography>
 
@@ -115,7 +157,7 @@ export default class CurrencyWall extends Component<WallProps, WallState> {
                         </Grid>
                     </Grid>
                 </Grid>
-            </Fragment>
+            </Card>
         );
     }
 }

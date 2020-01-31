@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CurrencyForm from './components/CurrencyForm';
+import CurrencyWall from './components/CurrencyWall';
 
 import './App.scss';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,7 +8,6 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import CurrencyWall from './components/CurrencyWall';
 
 type AppState = {
     currency: string | null;
@@ -22,13 +22,13 @@ export default class App extends Component<{}, AppState> {
         };
     }
 
-    handleSubmit = (data: { currency: string }) => {
+    handleSubmit = (currency: string): void => {
         this.setState({
-            currency: data.currency,
+            currency,
         });
     };
 
-    render() {
+    render(): JSX.Element {
         return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -36,10 +36,11 @@ export default class App extends Component<{}, AppState> {
                     <Typography component="h1" variant="h3">
                         Forex Live Wall
                     </Typography>
-                    <CurrencyForm onCurrencySubmit={this.handleSubmit} />
-                </div>
 
-                {this.state.currency && <CurrencyWall currencyTicker={this.state.currency} />}
+                    <CurrencyForm onCurrencySubmit={this.handleSubmit} />
+
+                    {this.state.currency && <CurrencyWall currencyTicker={this.state.currency} />}
+                </div>
 
                 <Box mt={8}>
                     <Typography variant="body2" color="textSecondary" align="center">
