@@ -1,5 +1,7 @@
 # Forex Live Wall
 
+Small sample project with basic api requests to fetch forex data and display in simple format. Create as par of a job application.
+
 ## Installing
 
 Using yarn:
